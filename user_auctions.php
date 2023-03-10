@@ -13,7 +13,7 @@ if (!isset($_SESSION['email']) || !$_SESSION['loggedin']) {
 }
 
 // Retrieve all auctions belonging to the user
-$stmt = $pdo->prepare('SELECT * FROM auctions WHERE user_id = ? ORDER BY created_at DESC');
+$stmt = $pdo->prepare('SELECT * FROM auctions WHERE user_id = ? ORDER BY end_time DESC');
 $stmt->execute([$_SESSION['id']]);
 $auctions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // var_dump($auctions)
@@ -45,9 +45,9 @@ $auctions = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <th>Photo</th>
             <th>Item Name</th>
             <th>Description</th>
-            <th>Current Price</th>
             <th>Created At</th>
             <th>End Time</th>
+            <th>Current Price</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -57,9 +57,9 @@ $auctions = $stmt->fetchAll(PDO::FETCH_ASSOC);
               <td class="align-middle"><img src="uploads/<?php echo $auction['photo']; ?>" alt="<?php echo $auction['name']; ?>" style="max-height: 100px;"></td>
               <td class="align-middle"><?= $auction['name'] ?></td>
               <td class="align-middle text-truncate" style="max-width: 100px;"><?= $auction['description'] ?></td>
-              <td class="align-middle"><?= $auction['price'] ?></td>
               <td class="align-middle"><?= $auction['created_at'] ?></td>
               <td class="align-middle"><?= $auction['end_time'] ?></td>
+              <td class="align-middle"><?= $auction['price'] ?></td>
               <td class="align-middle">
                 <?php if ($auction['end_time'] <= date('Y-m-d H:i:s')) :
                 ?>
@@ -68,7 +68,7 @@ $auctions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                 <?php else : ?>
                   <a href="auction_detail.php?id=<?= $auction['id'] ?>" class="btn btn-primary"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-                  
+
                   <a href="edit_auction.php?id=<?= $auction['id'] ?>" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i></a>
                   <a href="delete_auction.php?id=<?= $auction['id'] ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this auction?')"><i class="fa-solid fa-trash"></i></a>
                 <?php endif; ?>
