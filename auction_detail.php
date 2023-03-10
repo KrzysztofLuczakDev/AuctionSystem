@@ -40,21 +40,11 @@ if (!$auction) {
     exit();
 }
 
-// Check if user is the creator of the auction
-// if ($_SESSION['id'] == $auction['user_id']) {
-// $_SESSION['error'] = 'You cannot bid on your own auction';
-// header("Location: auction_detail.php?id=$auction_id");
-// exit();
-
-// }
-
 $now = new DateTime();
 $end_time = new DateTime($auction['end_time']);
 $interval = $now->diff($end_time);
 $time_left = $interval->format('%d days %H:%I:%S');
 
-
-// var_dump($auction['user_id']);
 
 // Check if the bid form has been submitted
 if (isset($_POST['action'])) {
@@ -93,6 +83,18 @@ if (isset($_POST['action'])) {
         // Show a success message
         $message = "Bid successfully submitted!";
         $messageClass = "text-success mt-4";
+        $sql = "SELECT * FROM users WHERE id = $user_id";
+        $result = $conn->query($sql);
+        $user = $result->fetch_assoc();
+        $sql = "SELECT * FROM auctions WHERE id = $auction_id";
+        $result = $conn->query($sql);
+        $auction = $result->fetch_assoc();
+
+
+        // insert notification into database
+        $sql = "INSERT INTO notifications (user_id, user_name, auction_id, auction_name, bid_amount, timestamp,auction_user_id, bid_user_id)
+        VALUES ($user_id, '{$user['email']}', $auction_id, '{$auction['name']}', $new_bid_amount, NOW(),{$auction['user_id']} ,$user_id)";
+        $conn->query($sql);
     } else {
         // Show an error message
         $message = "Your bid must be higher than the current highest bid!";
@@ -131,6 +133,24 @@ if (isset($_POST['action10%'])) {
         // Show a success message
         $message = "Bid successfully submitted!";
         $messageClass = "text-success mt-4";
+
+
+
+
+        $sql = "SELECT * FROM users WHERE id = $user_id";
+        $result = $conn->query($sql);
+        $user = $result->fetch_assoc();
+        $sql = "SELECT * FROM auctions WHERE id = $auction_id";
+        $result = $conn->query($sql);
+        $auction = $result->fetch_assoc();
+        // var_dump($auction);
+        // var_dump($user);
+
+
+        // insert notification into database
+        $sql = "INSERT INTO notifications (user_id, user_name, auction_id, auction_name, bid_amount, timestamp,auction_user_id, bid_user_id)
+        VALUES ($user_id, '{$user['email']}', $auction_id, '{$auction['name']}', $new_bid_amount, NOW(),{$auction['user_id']} ,$user_id)";
+        $conn->query($sql);
     } else {
         // Show an error message
         $message = "Your bid must be higher than the current highest bid!";
@@ -155,8 +175,6 @@ $current_bids = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD" crossorigin="anonymous"></script>
-    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"> -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script> -->
     <style>
         tbody tr:first-child {
             background-color: #00c92ead;
@@ -190,8 +208,8 @@ $current_bids = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                             <input type="number" id="bidAmount" name="bidAmount" class="form-control">
                                         </div>
                                         <button class="btn btn-primary" type="submit" name="action" value="bidAmount">Bid from amount</button>
-                                        
-                                            <button class="btn btn-primary" type="submit" name="action10%" value="bidUp">Bid 10%</button>
+
+                                        <button class="btn btn-primary" type="submit" name="action10%" value="bidUp">Bid 10%</button>
                                 </div>
 
                             <?php } ?>
