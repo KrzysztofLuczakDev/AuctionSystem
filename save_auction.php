@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bindParam(':user_id', $user_id);
 
     if ($stmt->execute()) {
-        move_uploaded_file($photo_tmp_name, "uploads/$photo_name");
+        move_uploaded_file($photo_tmp_name, "/Users/krzysztofluczak/Documents/DeveloperWorkspaces/AuctionSystem/AuctionSystem/uploads/$photo_name");
         $_SESSION['success'] = 'Auction created successfully';
         header('Location: dashboard.php');
         exit;
