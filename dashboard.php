@@ -6,7 +6,10 @@ include 'navbar.php';
 
 
 // Fetch all auctions
-$sql = "SELECT * FROM auctions ORDER BY end_time DESC";
+$sql = "SELECT *,
+  CASE WHEN end_time <= NOW() THEN 1 ELSE 0 END AS is_expired
+FROM auctions
+ORDER BY is_expired ASC, end_time ASC";
 $stmt = $pdo->query($sql);
 $auctions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -46,9 +49,9 @@ $auctions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <tr>
                         <th>Photo</th>
                         <th>Name</th>
-                        <th>Price</th>
-                        <th>Time Left</th>
                         <th>Description</th>
+                        <th>Time Left</th>
+                        <th>Price</th>
                         <th>Action</th>
                         <!-- <th>Status</th> -->
                     </tr>
@@ -80,11 +83,11 @@ $auctions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         ?>
                         <tr class="<?php echo $bg_color; ?>">
                             <td><img src="uploads/<?php echo $auction['photo']; ?>" alt="<?php echo $auction['name']; ?>" style="max-height: 100px;"></td>
-                            <td><?php echo $auction['name']; ?></td>
-                            <td><?php echo number_format($auction['price'], 2); ?></td>
-                            <td><?php echo $time_left; ?></td>
-                            <td class="text-truncate" style="max-width: 100px;"><?php echo $auction['description']; ?></td>
-                            <td>
+                            <td style="width: 15%;"><?php echo $auction['name']; ?></td>
+                            <td style="width: 15%; max-width: 50px;" class="text-truncate"><?php echo $auction['description']; ?></td>
+                            <td style="width: 15%;"><?php echo $time_left; ?></td>
+                            <td style="width: 15%;"><?php echo number_format($auction['price'], 2); ?></td>
+                            <td style="width: 15%;">
                                 <a href="<?php echo $auctionHref; ?>" class="<?php echo $auctionBtn; ?>"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
                             </td>
                         </tr>
@@ -118,7 +121,7 @@ $auctions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 countdowns[i].innerHTML = days + ' days ' + formatNumber(hours) + ':' + formatNumber(minutes) + ':' + formatNumber(seconds);
 
             }
-        }, 1000);
+        });
 
         function formatNumber(num) {
             return (num < 10 ? '0' : '') + num;
