@@ -2,7 +2,7 @@
 
 // Database configuration
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'systemaukcyjny');
+define('DB_NAME', 'auctionsystem');
 define('DB_USER', 'root');
 define('DB_PASSWORD', 't372Yf*e');
 

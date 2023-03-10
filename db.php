@@ -1,7 +1,7 @@
 <?php
 // Replace the placeholders with your own database credentials
 $host = 'localhost';
-$dbname = 'systemaukcyjny';
+$dbname = 'auctionsystem';
 $user = 'root';
 $password = 't372Yf*e';
 
