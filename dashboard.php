@@ -6,7 +6,7 @@ include 'navbar.php';
 
 
 // Fetch all auctions
-$sql = "SELECT * FROM auctions ORDER BY created_at DESC";
+$sql = "SELECT * FROM auctions ORDER BY end_time DESC";
 $stmt = $pdo->query($sql);
 $auctions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -17,6 +17,7 @@ $auctions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <title>Auction</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
 
@@ -64,13 +65,15 @@ $auctions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             // $status = 'Inactive';
                             $bg_color = 'table-secondary';
                             $time_left = 'FINISHED';
-                            $auctionHref = '#';
+                            $auctionHref = 'auction_detail.php?id=' . $auction['id'];
                             $auctionBtn = 'btn btn-secondary';
+                            $auctionBtnText = 'Expired';
                         } else {
                             // $status = 'Active';
                             $bg_color = '';
                             $auctionHref = 'auction_detail.php?id=' . $auction['id'];
                             $auctionBtn = 'btn btn-primary';
+                            $auctionBtnText = 'Bid Now';
                             // add live countdown
                             $time_left = '<span class="countdown" data-end-time="' . $auction['end_time'] . '">' . $time_left . '</span>';
                         }
@@ -80,9 +83,9 @@ $auctions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <td><?php echo $auction['name']; ?></td>
                             <td><?php echo number_format($auction['price'], 2); ?></td>
                             <td><?php echo $time_left; ?></td>
-                            <td class="text-truncate" style="max-width: 150px;"><?php echo $auction['description']; ?></td>
+                            <td class="text-truncate" style="max-width: 100px;"><?php echo $auction['description']; ?></td>
                             <td>
-                                <a href="<?php echo $auctionHref; ?>" class="<?php echo $auctionBtn; ?>">Bid Now</a>
+                                <a href="<?php echo $auctionHref; ?>" class="<?php echo $auctionBtn; ?>"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -100,7 +103,7 @@ $auctions = $stmt->fetchAll(PDO::FETCH_ASSOC);
             let countdowns = document.getElementsByClassName('countdown');
             for (let i = 0; i < countdowns.length; i++) {
                 let endTime = new Date(countdowns[i].getAttribute('data-end-time'));
-                let secondsLeft = Math.floor((endTime - now) / 1000);
+                let secondsLeft = Math.floor((endTime - now) / 1000) + 3600;
                 if (secondsLeft < 0) {
                     countdowns[i].innerHTML = 'FINISHED';
                     continue;
@@ -113,6 +116,7 @@ $auctions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 secondsLeft -= minutes * 60;
                 let seconds = secondsLeft;
                 countdowns[i].innerHTML = days + ' days ' + formatNumber(hours) + ':' + formatNumber(minutes) + ':' + formatNumber(seconds);
+
             }
         }, 1000);
 
