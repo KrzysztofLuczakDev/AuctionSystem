@@ -78,7 +78,7 @@ $auctions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             $auctionBtn = 'btn btn-primary';
                             $auctionBtnText = 'Bid Now';
                             // add live countdown
-                            $time_left = '<span class="countdown" data-end-time="' . $auction['end_time'] . '">' . $time_left . '</span>';
+                            $time_left = '<span class="countdown" data-end-time="' . $auction['end_time'] . '"></span>';
                         }
                         ?>
                         <tr class="<?php echo $bg_color; ?>">
@@ -101,8 +101,9 @@ $auctions = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
     <script>
         // update countdown every second
+        
         setInterval(function() {
-            let now = new Date();
+            let now = new Date().getTime();
             let countdowns = document.getElementsByClassName('countdown');
             for (let i = 0; i < countdowns.length; i++) {
                 let endTime = new Date(countdowns[i].getAttribute('data-end-time'));
@@ -121,7 +122,7 @@ $auctions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 countdowns[i].innerHTML = days + ' days ' + formatNumber(hours) + ':' + formatNumber(minutes) + ':' + formatNumber(seconds);
 
             }
-        });
+        },200);
 
         function formatNumber(num) {
             return (num < 10 ? '0' : '') + num;

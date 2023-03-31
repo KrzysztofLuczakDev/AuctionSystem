@@ -44,6 +44,7 @@ $now = new DateTime();
 $end_time = new DateTime($auction['end_time']);
 $interval = $now->diff($end_time);
 $time_left = $interval->format('%d days %H:%I:%S');
+// var_dump($time_left);
 
 
 // Check if the bid form has been submitted
@@ -195,7 +196,7 @@ $current_bids = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="d-flex justify-content-between">
                     <div>
                         <div id="countdown"></div>
-                        <h4 class="mb-4 "><?php echo '<span class="countdown" data-end-time="' . $auction['end_time'] . '">' . $time_left . '</span>' ?></h4>
+                        <h4 class="mb-4 "><?php echo '<span class="countdown" data-end-time="' . $auction['end_time'] . '"></span>' ?></h4>
                         <h3 class="mb-4"><?php echo $auction['price'] ?>$</h3>
                     </div>
                     <div>
@@ -263,13 +264,13 @@ $current_bids = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <script>
         // update countdown every second
+        console.log(document.getElementsByClassName('countdown'));
         setInterval(function() {
-            let now = new Date();
+            let now = new Date().getTime();
             let countdowns = document.getElementsByClassName('countdown');
             for (let i = 0; i < countdowns.length; i++) {
                 let endTime = new Date(countdowns[i].getAttribute('data-end-time'));
                 let secondsLeft = Math.floor((endTime - now) / 1000) + 3600;
-
                 if (secondsLeft < 0) {
                     countdowns[i].innerHTML = 'FINISHED';
                     continue;
@@ -284,7 +285,7 @@ $current_bids = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 countdowns[i].innerHTML = days + ' days ' + formatNumber(hours) + ':' + formatNumber(minutes) + ':' + formatNumber(seconds);
 
             }
-        });
+        },200);
 
         function formatNumber(num) {
             return (num < 10 ? '0' : '') + num;
